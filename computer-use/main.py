@@ -10,8 +10,8 @@ import os
 
 import cua
 import local_computer
-import openai
-
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from openai import AzureOpenAI
 
 def main():
     logging.basicConfig(level=logging.WARNING, format="%(message)s")
@@ -31,13 +31,14 @@ def main():
     args = parser.parse_args()
 
     if args.endpoint == "azure":
-        client = openai.AzureOpenAI(
-            azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-            api_key=os.environ["AZURE_OPENAI_API_KEY"],
-            api_version="2025-03-01-preview",
+        token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+        client = AzureOpenAI(
+            azure_ad_token_provider=token_provider,
+            azure_endpoint="https://chattest-westus2-kel54xbecb3to.openai.azure.com",
+            api_version="2025-03-01-preview"
         )
     else:
-        client = openai.OpenAI()
+        client = AzureOpenAI()
 
     model = args.model
 

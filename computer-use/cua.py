@@ -195,6 +195,8 @@ class Agent:
             method = getattr(self.computer, action)
             method(**action_args)
             screenshot = self.computer.screenshot()
+            print(f"----- Action: {self.state.next_action}")
+            print(f"----- call_id: {self.state.call_id}")
             next_input = openai.types.responses.response_input_param.ComputerCallOutput(
                 type="computer_call_output",
                 call_id=self.state.call_id,
